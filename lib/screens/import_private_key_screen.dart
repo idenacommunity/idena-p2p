@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../services/screen_security_service.dart';
 import 'pin_setup_screen.dart';
 
 /// Screen for importing an account using a private key
+/// SECURITY: Screenshot protection enabled to prevent private key capture
 class ImportPrivateKeyScreen extends StatefulWidget {
   const ImportPrivateKeyScreen({super.key});
 
@@ -16,10 +18,24 @@ class _ImportPrivateKeyScreenState extends State<ImportPrivateKeyScreen> {
   final _privateKeyController = TextEditingController();
   bool _isImporting = false;
   bool _obscureText = true;
+  final _screenSecurity = ScreenSecurityService();
+
+  @override
+  void initState() {
+    super.initState();
+    // SECURITY: Enable screenshot protection on this sensitive screen
+    _screenSecurity.enableScreenSecurity();
+  }
 
   @override
   void dispose() {
+    // SECURITY: Clear sensitive data before disposing
+    _privateKeyController.text = '';
+    _privateKeyController.clear();
     _privateKeyController.dispose();
+
+    // SECURITY: Disable screenshot protection when leaving screen
+    _screenSecurity.disableScreenSecurity();
     super.dispose();
   }
 

@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'verify_mnemonic_screen.dart';
+import '../services/screen_security_service.dart';
 
 /// Screen for backing up the mnemonic phrase
 /// SECURITY: Forces user to view and acknowledge mnemonic before proceeding
+/// SECURITY: Screenshot protection enabled to prevent mnemonic capture
 class BackupMnemonicScreen extends StatefulWidget {
   final String mnemonic;
 
@@ -19,6 +22,21 @@ class BackupMnemonicScreen extends StatefulWidget {
 class _BackupMnemonicScreenState extends State<BackupMnemonicScreen> {
   bool _isMnemonicVisible = false;
   bool _hasAcknowledged = false;
+  final _screenSecurity = ScreenSecurityService();
+
+  @override
+  void initState() {
+    super.initState();
+    // SECURITY: Enable screenshot protection on this sensitive screen
+    _screenSecurity.enableScreenSecurity();
+  }
+
+  @override
+  void dispose() {
+    // SECURITY: Disable screenshot protection when leaving screen
+    _screenSecurity.disableScreenSecurity();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -268,15 +286,36 @@ class _BackupMnemonicScreenState extends State<BackupMnemonicScreen> {
     );
   }
 
-  void _copyMnemonic() {
-    Clipboard.setData(ClipboardData(text: widget.mnemonic));
+  void _copyMnemonic() async {
+    // SECURITY FIX: Copy mnemonic to clipboard
+    await Clipboard.setData(ClipboardData(text: widget.mnemonic));
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Recovery phrase copied. Delete it after backing up!'),
+        content: Text(
+          'Recovery phrase copied. Will auto-clear in 60 seconds for security.',
+        ),
         backgroundColor: Colors.orange,
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 4),
       ),
     );
+
+    // SECURITY FIX: Auto-clear clipboard after 60 seconds
+    // This prevents the mnemonic from lingering in clipboard indefinitely
+    Timer(const Duration(seconds: 60), () async {
+      try {
+        // Only clear if clipboard still contains the mnemonic
+        final currentClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+        if (currentClipboard?.text == widget.mnemonic) {
+          await Clipboard.setData(const ClipboardData(text: ''));
+          debugPrint('✓ Clipboard auto-cleared for security');
+        }
+      } catch (e) {
+        debugPrint('Failed to auto-clear clipboard: $e');
+      }
+    });
   }
 
   void _proceedToVerification() {

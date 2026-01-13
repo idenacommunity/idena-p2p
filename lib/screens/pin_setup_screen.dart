@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../services/screen_security_service.dart';
 import 'pin_screen.dart';
 
 /// Screen for setting up a new PIN
 /// Provides explanation and initiates PIN creation flow
-class PinSetupScreen extends StatelessWidget {
+/// SECURITY: Screenshot protection enabled to prevent PIN capture
+class PinSetupScreen extends StatefulWidget {
   final VoidCallback? onComplete;
 
   const PinSetupScreen({
     Key? key,
     this.onComplete,
   }) : super(key: key);
+
+  @override
+  State<PinSetupScreen> createState() => _PinSetupScreenState();
+}
+
+class _PinSetupScreenState extends State<PinSetupScreen> {
+  final _screenSecurity = ScreenSecurityService();
+
+  @override
+  void initState() {
+    super.initState();
+    // SECURITY: Enable screenshot protection on this sensitive screen
+    _screenSecurity.enableScreenSecurity();
+  }
+
+  @override
+  void dispose() {
+    // SECURITY: Disable screenshot protection when leaving screen
+    _screenSecurity.disableScreenSecurity();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

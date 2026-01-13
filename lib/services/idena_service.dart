@@ -1,25 +1,80 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 /// Service for communicating with the Idena network via RPC
-/// Implements direct JSON-RPC calls to Idena nodes
+/// Implements direct JSON-RPC calls to Idena nodes with security features
 class IdenaService {
   // Default public Idena RPC node
   static const String defaultNodeUrl = 'https://rpc.idena.dev';
 
+  // SECURITY: Rate limiting - max 10 requests per second
+  final _requestQueue = <DateTime>[];
+  static const _maxRequestsPerSecond = 10;
+
+  // SECURITY: Request timeout
+  static const _requestTimeout = Duration(seconds: 30);
+
+  /// Validates that a URL uses HTTPS only (security requirement)
+  void _validateHttpsUrl(String url) {
+    final uri = Uri.parse(url);
+    if (uri.scheme != 'https') {
+      throw Exception(
+        'Security Error: Only HTTPS connections are allowed. '
+        'HTTP connections are insecure and expose blockchain data to attackers.',
+      );
+    }
+  }
+
+  /// Enforces rate limiting to prevent API abuse
+  Future<void> _enforceRateLimit() async {
+    // Clean old requests (older than 1 second)
+    final now = DateTime.now();
+    _requestQueue.removeWhere(
+      (time) => now.difference(time).inSeconds >= 1,
+    );
+
+    // Check if rate limit exceeded
+    if (_requestQueue.length >= _maxRequestsPerSecond) {
+      // Wait 100ms and retry
+      await Future.delayed(const Duration(milliseconds: 100));
+      return _enforceRateLimit(); // Recursive retry
+    }
+
+    // Add current request to queue
+    _requestQueue.add(now);
+  }
+
   /// Makes a JSON-RPC call to the Idena node
+  /// SECURITY: Enforces HTTPS, rate limiting, and request timeout
   Future<dynamic> _rpcCall(String method, List<dynamic> params) async {
     try {
-      final response = await http.post(
-        Uri.parse(defaultNodeUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'jsonrpc': '2.0',
-          'method': method,
-          'params': params,
-          'id': 1,
-        }),
-      );
+      // SECURITY: Validate HTTPS
+      _validateHttpsUrl(defaultNodeUrl);
+
+      // SECURITY: Enforce rate limiting
+      await _enforceRateLimit();
+
+      // Make request with timeout
+      final response = await http
+          .post(
+            Uri.parse(defaultNodeUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'jsonrpc': '2.0',
+              'method': method,
+              'params': params,
+              'id': 1,
+            }),
+          )
+          .timeout(
+            _requestTimeout,
+            onTimeout: () {
+              throw TimeoutException(
+                'RPC request timed out after ${_requestTimeout.inSeconds} seconds',
+              );
+            },
+          );
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);

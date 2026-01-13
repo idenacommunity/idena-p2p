@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/screen_security_service.dart';
 
 /// PIN screen mode: setup new PIN or enter existing PIN
 enum PinScreenMode {
@@ -11,6 +12,7 @@ enum PinScreenMode {
 
 /// Reusable PIN entry screen with numeric keypad
 /// Supports two modes: setup (with confirmation) and enter (validation)
+/// SECURITY: Screenshot protection enabled to prevent PIN capture
 class PinScreen extends StatefulWidget {
   final PinScreenMode mode;
   final String? expectedPin; // For enter mode validation
@@ -34,11 +36,22 @@ class _PinScreenState extends State<PinScreen>
   bool _awaitingConfirmation = false;
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
+  final _screenSecurity = ScreenSecurityService();
 
   @override
   void initState() {
     super.initState();
+    // SECURITY: Enable screenshot protection on this sensitive screen
+    _screenSecurity.enableScreenSecurity();
     _setupShakeAnimation();
+  }
+
+  @override
+  void dispose() {
+    // SECURITY: Disable screenshot protection when leaving screen
+    _screenSecurity.disableScreenSecurity();
+    _shakeController.dispose();
+    super.dispose();
   }
 
   void _setupShakeAnimation() {
@@ -59,12 +72,6 @@ class _PinScreenState extends State<PinScreen>
         _shakeController.reverse();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _shakeController.dispose();
-    super.dispose();
   }
 
   void _onNumberPressed(int number) {
