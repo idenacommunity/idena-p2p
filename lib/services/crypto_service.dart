@@ -5,6 +5,7 @@ import 'package:hex/hex.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:pointycastle/digests/sha3.dart';
+import '../utils/secure_error_handler.dart';
 
 /// Service for cryptographic operations including key generation and address derivation
 class CryptoService {
@@ -49,8 +50,14 @@ class CryptoService {
       // Convert to checksummed address (EIP-55)
       final address = EthereumAddress(addressBytes);
       return address.hexEip55;
-    } catch (e) {
-      throw Exception('Failed to derive address from private key: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing crypto details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'CryptoService.deriveAddressFromPrivateKey',
+      );
+      throw ValidationException('Invalid private key format');
     }
   }
 
@@ -98,8 +105,14 @@ class CryptoService {
       final privateKeyBytes = seed.sublist(0, 32);
 
       return HEX.encode(privateKeyBytes);
-    } catch (e) {
-      throw Exception('Failed to derive private key from mnemonic: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing mnemonic details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'CryptoService.privateKeyFromMnemonic',
+      );
+      throw ValidationException('Invalid mnemonic phrase');
     }
   }
 

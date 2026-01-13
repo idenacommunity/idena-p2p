@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../utils/secure_error_handler.dart';
 import '../widgets/account_card.dart';
 import 'connect_screen.dart';
 import 'settings_screen.dart';
@@ -262,11 +263,18 @@ class HomeScreen extends StatelessWidget {
                     ),
                   );
                 }
-              } catch (e) {
+              } catch (e, stackTrace) {
+                // SECURITY: Log error securely without exposing details to user
+                SecureErrorHandler.logError(
+                  e,
+                  stackTrace: stackTrace,
+                  context: 'HomeScreen._showDisconnectDialog',
+                );
+
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Failed to disconnect: $e'),
+                      content: Text(SecureErrorHandler.sanitizeError(e)),
                       backgroundColor: Colors.red,
                     ),
                   );

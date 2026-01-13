@@ -44,7 +44,8 @@ class _VerifyMnemonicScreenState extends State<VerifyMnemonicScreen> {
 
   /// Selects 3 random word indices to test
   void _selectRandomWords() {
-    final random = Random();
+    // SECURITY: Use cryptographically secure random number generator
+    final random = Random.secure();
     final indices = <int>[];
 
     while (indices.length < 3) {

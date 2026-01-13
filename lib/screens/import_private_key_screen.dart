@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
 import '../services/screen_security_service.dart';
+import '../utils/secure_error_handler.dart';
 import 'pin_setup_screen.dart';
 
 /// Screen for importing an account using a private key
@@ -215,11 +216,18 @@ class _ImportPrivateKeyScreenState extends State<ImportPrivateKeyScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing details to user
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'ImportPrivateKeyScreen._importAccount',
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to import account: $e'),
+            content: Text(SecureErrorHandler.sanitizeError(e)),
             backgroundColor: Colors.red,
           ),
         );

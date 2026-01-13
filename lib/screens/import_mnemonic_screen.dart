@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../utils/secure_error_handler.dart';
 import 'pin_setup_screen.dart';
 
 /// Screen for importing an account using a mnemonic seed phrase
@@ -192,11 +193,18 @@ class _ImportMnemonicScreenState extends State<ImportMnemonicScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing details to user
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'ImportMnemonicScreen._importAccount',
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to import account: $e'),
+            content: Text(SecureErrorHandler.sanitizeError(e)),
             backgroundColor: Colors.red,
           ),
         );

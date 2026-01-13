@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.7
+  sdk: '>=3.10.7 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,48 +33,48 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: 1.0.8
 
-  # Cryptography
-  bip39: ^1.0.6
-  pointycastle: ^3.9.1
-  hex: ^0.2.0
-  web3dart: ^2.6.1
+  # Cryptography - Pinned for security
+  bip39: 1.0.6
+  pointycastle: 3.9.1
+  hex: 0.2.0
+  web3dart: 2.7.3
 
-  # Secure Storage
-  flutter_secure_storage: ^9.2.2
+  # Secure Storage - Pinned for security
+  flutter_secure_storage: 9.2.4
 
-  # State Management
-  provider: ^6.1.2
+  # State Management - Pinned for stability
+  provider: 6.1.2
 
-  # Authentication
-  local_auth: ^2.1.0
-  shared_preferences: ^2.2.0
+  # Authentication - Pinned for security
+  local_auth: 2.3.0
+  shared_preferences: 2.2.3
 
-  # Networking
-  http: ^0.13.3
+  # Networking - Pinned for security
+  http: 1.2.2
 
-  # Phase 1 Security Enhancements
-  hashlib: ^1.20.0  # Argon2id PIN hashing with PHC format (pure Dart - works everywhere)
-  cryptography: ^2.7.0  # ChaCha20-Poly1305 for session-based encryption (AEAD)
-  crypto: ^3.0.5            # Additional crypto utilities
+  # Phase 1 Security Enhancements - Pinned for security
+  hashlib: 1.20.0  # Argon2id PIN hashing with PHC format (pure Dart - works everywhere)
+  cryptography: 2.7.0  # ChaCha20-Poly1305 for session-based encryption (AEAD)
+  crypto: 3.0.5            # Additional crypto utilities
 
-  # Phase 2 Security (added early)
-  flutter_jailbreak_detection: ^1.10.0  # Root/jailbreak detection
+  # Phase 2 Security - Pinned for security
+  flutter_jailbreak_detection: 1.10.0  # Root/jailbreak detection
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # Testing
-  mocktail: ^1.0.4  # Mocking for security tests
+  # Testing - Pinned for stability
+  mocktail: 1.0.4  # Mocking for security tests
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^6.0.0
+  flutter_lints: 5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

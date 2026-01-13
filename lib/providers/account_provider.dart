@@ -4,6 +4,7 @@ import '../services/crypto_service.dart';
 import '../services/vault_service.dart';
 import '../services/idena_service.dart';
 import '../services/encryption_service.dart';
+import '../utils/secure_error_handler.dart';
 
 /// Provider for managing account state throughout the application
 /// Uses ChangeNotifier to notify UI of state changes
@@ -92,8 +93,14 @@ class AccountProvider with ChangeNotifier {
 
       // Load full account information from network
       await refreshAccountData();
-    } catch (e) {
-      _error = 'Failed to load stored account: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.loadStoredAccount',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       _isConnected = false;
     } finally {
       _setLoading(false);
@@ -131,8 +138,14 @@ class AccountProvider with ChangeNotifier {
       refreshAccountData();
 
       return mnemonic;
-    } catch (e) {
-      _error = 'Failed to create new account: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.connectWithNewAccount',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       throw Exception(_error);
     } finally {
       _setLoading(false);
@@ -168,8 +181,14 @@ class AccountProvider with ChangeNotifier {
 
       // Load account info from network
       await refreshAccountData();
-    } catch (e) {
-      _error = 'Failed to import private key: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.connectWithPrivateKey',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       throw Exception(_error);
     } finally {
       _setLoading(false);
@@ -208,8 +227,14 @@ class AccountProvider with ChangeNotifier {
 
       // Load account info from network
       await refreshAccountData();
-    } catch (e) {
-      _error = 'Failed to import mnemonic: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.connectWithMnemonic',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       throw Exception(_error);
     } finally {
       _setLoading(false);
@@ -232,8 +257,14 @@ class AccountProvider with ChangeNotifier {
       _currentAccount = null;
       _isConnected = false;
       notifyListeners();
-    } catch (e) {
-      _error = 'Failed to disconnect: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.disconnect',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       throw Exception(_error);
     } finally {
       _setLoading(false);
@@ -251,8 +282,14 @@ class AccountProvider with ChangeNotifier {
       _currentAccount = IdenaAccount.fromMap(accountInfo);
       _error = null;
       notifyListeners();
-    } catch (e) {
-      _error = 'Failed to refresh account data: $e';
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely and sanitize for display
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'AccountProvider.refreshAccountData',
+      );
+      _error = SecureErrorHandler.sanitizeError(e);
       // Don't throw - we want to keep the account connected even if refresh fails
       notifyListeners();
     }

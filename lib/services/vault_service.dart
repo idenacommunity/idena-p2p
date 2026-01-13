@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:hashlib/hashlib.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hex/hex.dart';
+import '../utils/secure_error_handler.dart';
 
 /// Service for securely storing and retrieving sensitive data like private keys
 /// Uses platform-specific secure storage (Keychain on iOS, Keystore on Android)
@@ -33,8 +34,14 @@ class VaultService {
         key: _privateKeyStorageKey,
         value: privateKey,
       );
-    } catch (e) {
-      throw Exception('Failed to save private key: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing private key details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.savePrivateKey',
+      );
+      throw StorageException('Failed to save private key securely');
     }
   }
 
@@ -45,8 +52,14 @@ class VaultService {
         key: _addressStorageKey,
         value: address,
       );
-    } catch (e) {
-      throw Exception('Failed to save address: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.saveAddress',
+      );
+      throw StorageException('Failed to save address');
     }
   }
 
@@ -55,8 +68,14 @@ class VaultService {
   Future<String?> getPrivateKey() async {
     try {
       return await _storage.read(key: _privateKeyStorageKey);
-    } catch (e) {
-      throw Exception('Failed to retrieve private key: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing storage details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.getPrivateKey',
+      );
+      throw StorageException('Failed to retrieve private key');
     }
   }
 
@@ -65,8 +84,14 @@ class VaultService {
   Future<String?> getAddress() async {
     try {
       return await _storage.read(key: _addressStorageKey);
-    } catch (e) {
-      throw Exception('Failed to retrieve address: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.getAddress',
+      );
+      throw StorageException('Failed to retrieve address');
     }
   }
 
@@ -98,8 +123,14 @@ class VaultService {
       }
 
       return salt;
-    } catch (e) {
-      throw Exception('Failed to get PIN salt: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService._getPinSalt',
+      );
+      throw SecurityException('Failed to get PIN salt');
     }
   }
 
@@ -125,8 +156,14 @@ class VaultService {
       final digest = argon2.convert(utf8.encode(pin));
 
       return digest.encoded();
-    } catch (e) {
-      throw Exception('Failed to hash PIN: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing PIN details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService._hashPin',
+      );
+      throw SecurityException('Failed to hash PIN');
     }
   }
 
@@ -146,8 +183,14 @@ class VaultService {
         key: _pinStorageKey,
         value: hashedPin,
       );
-    } catch (e) {
-      throw Exception('Failed to save PIN: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing PIN details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.savePin',
+      );
+      throw SecurityException('Failed to save PIN securely');
     }
   }
 
@@ -165,7 +208,13 @@ class VaultService {
       // Verify using Argon2's built-in verification (constant-time)
       // argon2Verify() parses the PHC encoded string and verifies the password
       return argon2Verify(storedHash, utf8.encode(pin));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing PIN details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.verifyPin',
+      );
       // If verification fails for any reason, return false (safer than throwing)
       return false;
     }
@@ -178,8 +227,14 @@ class VaultService {
   Future<String?> getPin() async {
     try {
       return await _storage.read(key: _pinStorageKey);
-    } catch (e) {
-      throw Exception('Failed to retrieve PIN hash: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.getPin',
+      );
+      throw StorageException('Failed to retrieve PIN hash');
     }
   }
 
@@ -212,8 +267,14 @@ class VaultService {
       await _storage.delete(key: _pinStorageKey);
       await _storage.delete(key: _pinSaltKey);
       await _storage.delete(key: _legacyPinKey); // Clean up legacy if exists
-    } catch (e) {
-      throw Exception('Failed to delete PIN: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.deletePin',
+      );
+      throw StorageException('Failed to delete PIN');
     }
   }
 
@@ -222,7 +283,13 @@ class VaultService {
     try {
       final pin = await _storage.read(key: _pinStorageKey);
       return pin != null && pin.isNotEmpty;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.hasPin',
+      );
       return false;
     }
   }
@@ -233,8 +300,14 @@ class VaultService {
     try {
       await _storage.delete(key: _privateKeyStorageKey);
       await _storage.delete(key: _addressStorageKey);
-    } catch (e) {
-      throw Exception('Failed to delete private key: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing storage details
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.deletePrivateKey',
+      );
+      throw StorageException('Failed to delete private key');
     }
   }
 
@@ -243,8 +316,14 @@ class VaultService {
   Future<void> deleteAll() async {
     try {
       await _storage.deleteAll();
-    } catch (e) {
-      throw Exception('Failed to delete all data: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'VaultService.deleteAll',
+      );
+      throw StorageException('Failed to delete all data');
     }
   }
 

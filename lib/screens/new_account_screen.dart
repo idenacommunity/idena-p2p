@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
 import '../services/crypto_service.dart';
+import '../utils/secure_error_handler.dart';
 import 'backup_mnemonic_screen.dart';
 import 'pin_setup_screen.dart';
 
@@ -109,7 +110,14 @@ class _NewAccountScreenState extends State<NewAccountScreen> {
       if (backupComplete == true && mounted) {
         await _createAccountWithMnemonic(mnemonic);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing details to user
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'NewAccountScreen._createAccount',
+      );
+
       setState(() {
         _isCreating = false;
       });
@@ -117,7 +125,7 @@ class _NewAccountScreenState extends State<NewAccountScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create account: $e'),
+            content: Text(SecureErrorHandler.sanitizeError(e)),
             backgroundColor: Colors.red,
           ),
         );
@@ -150,11 +158,18 @@ class _NewAccountScreenState extends State<NewAccountScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely without exposing details to user
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'NewAccountScreen._createAccountWithMnemonic',
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create account: $e'),
+            content: Text(SecureErrorHandler.sanitizeError(e)),
             backgroundColor: Colors.red,
           ),
         );

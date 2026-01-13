@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../utils/secure_error_handler.dart';
 
 /// Service for communicating with the Idena network via RPC
 /// Implements direct JSON-RPC calls to Idena nodes with security features
@@ -79,14 +80,26 @@ class IdenaService {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         if (jsonResponse['error'] != null) {
-          throw Exception('RPC Error: ${jsonResponse['error']['message']}');
+          final rpcError = jsonResponse['error']['message'];
+          throw NetworkException('RPC Error: $rpcError');
         }
         return jsonResponse['result'];
       } else {
-        throw Exception('HTTP Error: ${response.statusCode}');
+        throw NetworkException('HTTP Error: ${response.statusCode}');
       }
-    } catch (e) {
-      throw Exception('Failed to make RPC call: $e');
+    } catch (e, stackTrace) {
+      // SECURITY: Log error securely for debugging
+      SecureErrorHandler.logError(
+        e,
+        stackTrace: stackTrace,
+        context: 'IdenaService._rpcCall',
+      );
+
+      // Re-throw as NetworkException if not already
+      if (e is NetworkException) {
+        rethrow;
+      }
+      throw NetworkException('Failed to make RPC call: ${SecureErrorHandler.sanitizeError(e)}');
     }
   }
 
