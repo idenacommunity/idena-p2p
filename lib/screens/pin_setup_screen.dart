@@ -131,8 +131,8 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
         );
 
         // Call completion callback
-        if (onComplete != null) {
-          onComplete!();
+        if (widget.onComplete != null) {
+          widget.onComplete!();
         } else {
           // Default: go back to home
           Navigator.of(context).popUntil((route) => route.isFirst);
