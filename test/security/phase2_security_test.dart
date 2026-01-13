@@ -179,7 +179,6 @@ void main() {
     });
 
     test('random word selection generates unique indices', () {
-      const mnemonicLength = 12;
       final selectedIndices = <int>{};
       final random = <int>[];
 

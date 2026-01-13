@@ -176,7 +176,7 @@ void main() {
       final encrypted = await encryptionService.encrypt(plaintext);
 
       // Tamper with encrypted data (modify last character)
-      final tamperedEncrypted = encrypted.substring(0, encrypted.length - 1) + 'X';
+      final tamperedEncrypted = '${encrypted.substring(0, encrypted.length - 1)}X';
 
       // Decrypt should fail with authentication error
       expect(

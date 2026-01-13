@@ -19,11 +19,11 @@ class PinScreen extends StatefulWidget {
   final int pinLength;
 
   const PinScreen({
-    Key? key,
+    super.key,
     required this.mode,
     this.expectedPin,
     this.pinLength = 6,
-  }) : super(key: key);
+  });
 
   @override
   State<PinScreen> createState() => _PinScreenState();
@@ -138,6 +138,7 @@ class _PinScreenState extends State<PinScreen>
       // Incorrect PIN - shake and reset
       _triggerShake();
       Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) return;
         setState(() {
           _pin = '';
         });

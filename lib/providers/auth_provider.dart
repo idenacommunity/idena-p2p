@@ -115,8 +115,11 @@ class AuthProvider with ChangeNotifier, WidgetsBindingObserver {
   }
 
   /// Gets the stored PIN (for validation in UI)
+  /// Note: This returns the raw PIN for legacy UI validation.
+  /// For secure authentication, use verifyPin() instead.
   Future<String?> getStoredPin() async {
-    return await _vaultService.getPin();
+    // ignore: deprecated_member_use_from_same_package
+    return _vaultService.getPin();
   }
 
   /// Starts the auto-lock timer (fixed 1 minute)

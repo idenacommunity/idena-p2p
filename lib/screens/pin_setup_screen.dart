@@ -11,9 +11,9 @@ class PinSetupScreen extends StatefulWidget {
   final VoidCallback? onComplete;
 
   const PinSetupScreen({
-    Key? key,
+    super.key,
     this.onComplete,
-  }) : super(key: key);
+  });
 
   @override
   State<PinSetupScreen> createState() => _PinSetupScreenState();

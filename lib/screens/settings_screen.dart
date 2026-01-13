@@ -5,7 +5,7 @@ import 'pin_setup_screen.dart';
 
 /// Settings screen for security and account management
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -77,19 +77,22 @@ class SettingsScreen extends StatelessWidget {
     final currentPin = await authProvider.getStoredPin();
 
     if (currentPin == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No PIN is currently set'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No PIN is currently set'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
       return;
     }
 
     // Verify current PIN first
+    if (!context.mounted) return;
     final verified = await _verifyCurrentPin(context, currentPin);
 
-    if (!verified) {
+    if (!verified || !context.mounted) {
       return;
     }
 
