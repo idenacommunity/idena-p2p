@@ -2,6 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Repository Guidelines
+
+**IMPORTANT: This is a public, ongoing, community-maintained project that MUST remain anonymous.**
+
+### Anonymity Requirements
+- **ALL commits** must be authored by "Idena Community <communityidena@gmail.com>"
+- **NEVER** include personal names, emails, or identifying information in commits, code comments, or documentation
+- **ALWAYS** use the anonymous SSH key (`~/.ssh/id_ed25519_idenacommunity`) when pushing changes
+- Git configuration must be set to anonymous credentials before any commit:
+  ```bash
+  git config user.name "Idena Community"
+  git config user.email "communityidena@gmail.com"
+  ```
+
+### Project Status
+- **Visibility**: Public repository on GitHub (https://github.com/idenacommunity/idena-p2p)
+- **Status**: Active development, ongoing project
+- **Maintenance**: Community-maintained by anonymous contributors
+- **Contributions**: All contributions welcome, but must follow anonymity guidelines
+- **Purpose**: Reference implementation for Idena mobile wallet development
+
+### When Working on This Project
+1. Always verify git config before committing
+2. Use anonymous commit messages
+3. Never reference personal projects or identities
+4. Keep focus on community benefit
+5. Document clearly for future anonymous contributors
+
 ## Project Overview
 
 **idena_p2p** is a minimal Idena mobile wallet built with Flutter, featuring PIN/biometric authentication and basic account management. It serves as a simplified reference implementation compared to the production-ready my-idena app.
