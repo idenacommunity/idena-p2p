@@ -253,28 +253,28 @@ main.dart (app entry)
 ## Key Dependencies
 
 **State Management:**
-- `provider` ^6.1.2: State management pattern
+- `provider` 6.1.2: State management pattern
 
 **Cryptography & Security:**
-- `bip39` ^1.0.6: BIP39 mnemonic generation
-- `web3dart` ^2.6.1: Ethereum-compatible crypto operations (key derivation, signing)
-- `pointycastle` ^3.9.1: SHA3 hashing (Keccak-256) for address derivation
-- `hex` ^0.2.0: Hexadecimal encoding/decoding
-- `hashlib` ^1.20.0: **Argon2id** PIN hashing with PHC format (Phase 1 security)
-- `cryptography` ^2.7.0: **ChaCha20-Poly1305** for session-based encryption (Phase 1 security)
-- `crypto` ^3.0.5: Additional crypto utilities
+- `bip39` 1.0.6: BIP39 mnemonic generation
+- `web3dart` 2.7.3: Ethereum-compatible crypto operations (key derivation, signing)
+- `pointycastle` 3.9.1: SHA3 hashing (Keccak-256) for address derivation
+- `hex` 0.2.0: Hexadecimal encoding/decoding
+- `hashlib` 1.20.0: **Argon2id** PIN hashing with PHC format (Phase 1 security)
+- `cryptography` 2.7.0: **ChaCha20-Poly1305** for session-based encryption (Phase 1 security)
+- `crypto` 3.0.5: Additional crypto utilities
 
 **Secure Storage & Authentication:**
-- `flutter_secure_storage` ^9.2.2: Secure storage (Keychain/Keystore)
-- `local_auth` ^2.1.0: Biometric authentication (TouchID/FaceID)
-- `shared_preferences` ^2.2.0: Local settings storage
-- `flutter_jailbreak_detection` ^1.10.0: Root/jailbreak detection (Phase 2 security)
+- `flutter_secure_storage` 9.2.4: Secure storage (Keychain/Keystore)
+- `local_auth` 2.3.0: Biometric authentication (TouchID/FaceID)
+- `shared_preferences` 2.2.3: Local settings storage
+- `flutter_jailbreak_detection` 1.10.0: Root/jailbreak detection (Phase 2 security)
 
 **Networking:**
-- `http` ^0.13.3: Network requests (JSON-RPC)
+- `http` 1.2.2: Network requests (JSON-RPC)
 
 **Testing:**
-- `mocktail` ^1.0.4: Mocking for security tests
+- `mocktail` 1.0.4: Mocking for security tests
 
 ## Idena-Specific Concepts
 
@@ -328,6 +328,8 @@ test/
 │   ├── cryptographic_security_test.dart    # Key derivation, entropy
 │   ├── phase2_security_test.dart           # Device security, screen security
 │   └── migration_test.dart                 # Data migration tests
+├── services/
+│   └── crypto_service_test.dart        # CryptoService unit tests
 └── widget_test.dart                    # Basic widget tests
 ```
 
@@ -498,28 +500,18 @@ if (authProvider.isUnlocked) {
 
 ## Platform-Specific Notes
 
-### iOS
-- Uses Keychain for secure storage via `flutter_secure_storage`
-- Biometric authentication via TouchID/FaceID requires `NSFaceIDUsageDescription` in `Info.plist`
-- Lock screen accessibility: `KeychainAccessibility.first_unlock`
-
-### Android
-- Uses Android Keystore for secure storage
-- Biometric authentication requires permissions in `AndroidManifest.xml`
-- Some devices may have keystore issues (see my-idena fallback encryption pattern)
-- `encryptedSharedPreferences: true` option for secure storage
+- **iOS**: Uses Keychain via `flutter_secure_storage`; requires `NSFaceIDUsageDescription` in `Info.plist` for biometrics
+- **Android**: Uses Android Keystore; some devices may have keystore issues (see my-idena fallback pattern)
 
 ## Reference Implementation
 
-This is a simplified version of the production `my-idena` app. When adding features:
+This is a simplified version of the production `my-idena` app. See the main repository CLAUDE.md (`../CLAUDE.md`) for cross-project development patterns and migration guides.
 
-1. Check `../my-idena` for reference implementations
-2. Adapt InheritedWidget patterns to Provider patterns
-3. Convert GetIt service locator usage to direct service instantiation
-4. Add null safety annotations (my-idena uses pre-null-safety Dart)
-5. Replace `idena_lib_dart` library calls with direct JSON-RPC via `IdenaService`
+## Security Documentation
 
-See the main repository CLAUDE.md (`../CLAUDE.md`) for cross-project development patterns.
+- [SECURITY_FIXES_SUMMARY.md](SECURITY_FIXES_SUMMARY.md) - Critical security fixes (Jan 2026)
+- [SECURITY_TESTING.md](SECURITY_TESTING.md) - Security testing procedures
+- [WEB_TEST_RESULTS.md](WEB_TEST_RESULTS.md) - Web platform testing guide
 
 ## Community Resources
 
