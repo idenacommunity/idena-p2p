@@ -3,6 +3,7 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.10+-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-lightgrey)](https://github.com/idenacommunity/idena-p2p)
+[![Development Status](https://img.shields.io/badge/Status-Early%20Development-orange)](https://github.com/idenacommunity/idena-p2p)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/idenacommunity/idena-p2p?style=social)](https://github.com/idenacommunity/idena-p2p/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/idenacommunity/idena-p2p?style=social)](https://github.com/idenacommunity/idena-p2p/network/members)
@@ -10,6 +11,22 @@
 **A minimal Idena mobile wallet with PIN/biometric authentication and basic account management.**
 
 Built by the Idena community as a lightweight reference implementation for mobile wallet development.
+
+---
+
+## ⚠️ Development Status
+
+**IMPORTANT: This project is in early development and has NOT been fully tested or audited.**
+
+- ❌ **Not production-ready** - Do not use with real funds
+- ⚠️ **Untested on devices** - Limited testing on physical iOS/Android devices
+- 🔄 **Active development** - Breaking changes may occur
+- 🔍 **No security audit** - Cryptographic implementation not professionally audited
+- 🧪 **Needs testing** - Comprehensive test coverage required
+
+**Use at your own risk. This is experimental software for development and learning purposes only.**
+
+---
 
 ## ✨ Features
 
@@ -143,6 +160,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Status**: Active Development
-**Version**: 1.0.0
+**Status**: Early Development (Not Production Ready)
+**Version**: 0.1.0-alpha
 **Maintainer**: Idena Community
+**Warning**: Experimental software - Use at your own risk
