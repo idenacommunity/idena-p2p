@@ -16,15 +16,15 @@ Built by the Idena community as a lightweight reference implementation for mobil
 
 ## ⚠️ Development Status
 
-**IMPORTANT: This project is in early development and has NOT been fully tested or audited.**
+**IMPORTANT: This project is in early development.**
 
-- ❌ **Not production-ready** - Do not use with real funds
-- ⚠️ **Untested on devices** - Limited testing on physical iOS/Android devices
+- ✅ **Security fixes applied** - Critical vulnerabilities fixed (Jan 2026) - see [SECURITY_FIXES_SUMMARY.md](SECURITY_FIXES_SUMMARY.md)
+- ⚠️ **Limited device testing** - Needs more real-world testing on physical devices
 - 🔄 **Active development** - Breaking changes may occur
-- 🔍 **No security audit** - Cryptographic implementation not professionally audited
-- 🧪 **Needs testing** - Comprehensive test coverage required
+- 🔍 **Professional audit pending** - Community security review completed
+- 🧪 **Test coverage in progress** - Comprehensive testing ongoing
 
-**Use at your own risk. This is experimental software for development and learning purposes only.**
+**Use with caution. While critical security issues have been fixed, this remains experimental software.**
 
 ---
 
@@ -97,18 +97,31 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 ## 🔐 Security Features
 
+### Active Security Protections
+
+- **HTTPS Enforcement**: All RPC connections secured with HTTPS-only validation
+- **Rate Limiting**: Protection against API abuse (10 requests/second)
+- **Request Timeout**: 30-second timeout for all network requests
 - **PIN Authentication**: Required for all sensitive operations
 - **Biometric Support**: Optional TouchID/FaceID on supported devices
 - **Secure Storage**: All private keys stored in iOS Keychain or Android Keystore
+- **Clipboard Auto-Clear**: Mnemonic phrases auto-clear after 60 seconds
+- **Screenshot Protection**: Native OS-level blocking on Android/iOS (FLAG_SECURE, blur effects)
 - **Auto-lock**: Configurable timeout (immediate, 1min, 5min, 30min)
 - **Session Security**: Keys encrypted in memory during active session
+
+### Security Documentation
+
+- [SECURITY_FIXES_SUMMARY.md](SECURITY_FIXES_SUMMARY.md) - Critical security fixes (Jan 2026)
+- [SECURITY_TESTING.md](SECURITY_TESTING.md) - Security testing procedures
+- [WEB_TEST_RESULTS.md](WEB_TEST_RESULTS.md) - Web platform testing guide
 
 ## 📱 Supported Platforms
 
 - ✅ iOS 12.0+
 - ✅ Android 5.0+ (API 21+)
+- ✅ Web (tested on Chrome) - Limited functionality (no screenshot protection)
 - ⚠️ macOS/Windows/Linux (not tested)
-- ⚠️ Web (not supported)
 
 ## 🛠️ Development
 
