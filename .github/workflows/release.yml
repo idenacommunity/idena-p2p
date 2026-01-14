@@ -1,0 +1,94 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-release:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.6'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore/release.jks
+
+      - name: Create key.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=keystore/release.jks
+          EOF
+
+      - name: Build signed APK
+        run: flutter build apk --release
+
+      - name: Verify APK signature
+        run: |
+          $ANDROID_SDK_ROOT/build-tools/*/apksigner verify --print-certs build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Rename APK
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/idena-p2p-${{ steps.get_version.outputs.VERSION }}.apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/idena-p2p-*.apk
+          retention-days: 90
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/idena-p2p-*.apk
+          generate_release_notes: true
+          body: |
+            ## Idena P2P Wallet ${{ steps.get_version.outputs.VERSION }}
+
+            ### Downloads
+            - `idena-p2p-${{ steps.get_version.outputs.VERSION }}.apk` - Android APK (ARM64, ARMv7, x86_64)
+
+            ### Security Features
+            - PIN authentication with Argon2id hashing
+            - Biometric authentication (TouchID/FaceID)
+            - Session-based encryption (ChaCha20-Poly1305)
+            - Root/jailbreak detection
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
