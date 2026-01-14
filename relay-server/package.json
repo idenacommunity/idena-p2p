@@ -1,0 +1,35 @@
+{
+  "name": "idena-p2p-relay-server",
+  "version": "1.0.0",
+  "description": "Relay server for Idena P2P messaging - Phase 1.5 MVP",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "idena",
+    "p2p",
+    "messaging",
+    "relay",
+    "websocket"
+  ],
+  "author": "Idena Community <communityidena@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.16.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

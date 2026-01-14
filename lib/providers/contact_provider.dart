@@ -214,6 +214,9 @@ class ContactProvider extends ChangeNotifier {
     }
   }
 
+  /// Alias for getContact (used by messaging screens)
+  Contact? getContactByAddress(String address) => getContact(address);
+
   /// Check if address is a contact
   bool isContact(String address) {
     return _contacts.any(

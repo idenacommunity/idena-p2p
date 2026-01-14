@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../providers/messaging_provider.dart';
 import '../utils/secure_error_handler.dart';
 import '../widgets/account_card.dart';
 import 'connect_screen.dart';
 import 'settings_screen.dart';
 import 'contacts/contacts_list_screen.dart';
+import 'messaging/conversations_screen.dart';
 
 /// Main home screen that displays connection status and account information
 class HomeScreen extends StatelessWidget {
@@ -22,6 +24,57 @@ class HomeScreen extends StatelessWidget {
               if (provider.isConnected && !provider.isLoading) {
                 return Row(
                   children: [
+                    Consumer<MessagingProvider>(
+                      builder: (context, messagingProvider, _) {
+                        final unreadCount = messagingProvider.totalUnreadCount;
+                        return Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chat_bubble_outline),
+                              onPressed: () async {
+                                // Initialize messaging provider with user address
+                                if (provider.currentAccount?.address != null) {
+                                  await messagingProvider.init(provider.currentAccount!.address);
+                                }
+                                if (context.mounted) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const ConversationsScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                              tooltip: 'Messages',
+                            ),
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: 8,
+                                top: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    unreadCount > 99 ? '99+' : unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                     IconButton(
                       icon: const Icon(Icons.people),
                       onPressed: () {

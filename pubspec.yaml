@@ -67,6 +67,10 @@ dependencies:
   hive_flutter: 1.1.0  # Hive Flutter integration
   path_provider: 2.1.2  # Get device storage paths
   uuid: 4.3.3  # Generate unique IDs for messages
+  intl: 0.19.0  # Internationalization and date formatting
+
+  # Network - For relay server communication (Phase 2)
+  web_socket_channel: 2.4.0  # WebSocket client for real-time messaging
 
 dev_dependencies:
   flutter_test:

@@ -7,7 +7,9 @@ import 'package:idena_p2p/screens/contacts/contact_detail_screen.dart';
 
 /// Screen displaying list of all contacts
 class ContactsListScreen extends StatefulWidget {
-  const ContactsListScreen({super.key});
+  final bool selectMode;
+
+  const ContactsListScreen({super.key, this.selectMode = false});
 
   @override
   State<ContactsListScreen> createState() => _ContactsListScreenState();
@@ -26,7 +28,7 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contacts'),
+        title: Text(widget.selectMode ? 'Select Contact' : 'Contacts'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -262,14 +264,20 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
     );
   }
 
-  /// Navigate to contact detail screen
+  /// Navigate to contact detail screen or return contact in select mode
   void _navigateToContactDetail(BuildContext context, Contact contact) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ContactDetailScreen(contact: contact),
-      ),
-    );
+    if (widget.selectMode) {
+      // In select mode, return the selected contact
+      Navigator.of(context).pop(contact);
+    } else {
+      // Normal mode, navigate to detail screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ContactDetailScreen(contact: contact),
+        ),
+      );
+    }
   }
 
   /// Refresh all contacts

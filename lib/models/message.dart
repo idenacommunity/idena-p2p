@@ -58,8 +58,6 @@ class Message {
         return '📹 Video Call';
       case MessageType.location:
         return '📍 Location';
-      default:
-        return 'Message';
     }
   }
 
