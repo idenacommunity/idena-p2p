@@ -77,7 +77,8 @@ lib/
 │   ├── migration_service.dart    # Data migration for security upgrades
 │   └── screen_security_service.dart  # Screen security (prevent screenshots)
 ├── utils/                        # Utility functions
-│   └── biometrics_util.dart      # Biometric authentication wrapper
+│   ├── biometrics_util.dart      # Biometric authentication wrapper
+│   └── secure_error_handler.dart # Secure error logging (sanitizes sensitive data)
 └── widgets/                      # Reusable UI components
     └── account_card.dart         # Account display card widget
 ```
@@ -145,7 +146,27 @@ flutter format --set-exit-if-changed lib/
 
 # Clean build artifacts
 flutter clean && flutter pub get
+
+# Generate coverage HTML report (requires lcov)
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html
 ```
+
+## CI/CD & Release Process
+
+### GitHub Actions Workflows
+
+The repository includes automated CI/CD workflows in `.github/workflows/`:
+
+- **ci.yml**: Runs on every push/PR - executes `flutter analyze` and `flutter test`
+- **release.yml**: Automated release builds triggered by version tags
+
+### Creating a Release
+
+See [CREATE_RELEASE_INSTRUCTIONS.md](CREATE_RELEASE_INSTRUCTIONS.md) for detailed release process including:
+- Git tag creation and versioning
+- GitHub release creation via web interface or CLI
+- Permission requirements for releases
 
 ## Architecture
 
@@ -347,6 +368,13 @@ flutter test --coverage
 
 # Run tests in a specific directory
 flutter test test/security/
+
+# Run a specific test by name
+flutter test --name "PIN validation"
+
+# Generate coverage HTML report (requires lcov)
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html
 ```
 
 ### Testing Patterns
@@ -388,6 +416,7 @@ setUp(() async {
 
 **Code Security:**
 - Never log or print private keys, seeds, PINs, or session keys
+- Use `SecureErrorHandler` for error logging to sanitize sensitive data automatically
 - Use secure storage (Keychain/Keystore) for all sensitive data at rest
 - Encrypt private keys in memory using `EncryptionService`
 - Clear sensitive data from memory after use
