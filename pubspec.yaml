@@ -62,6 +62,12 @@ dependencies:
   # Phase 2 Security - Pinned for security
   flutter_jailbreak_detection: 1.10.0  # Root/jailbreak detection
 
+  # Database & Storage - For contacts and messages
+  hive: 2.2.3  # Fast, lightweight NoSQL database
+  hive_flutter: 1.1.0  # Hive Flutter integration
+  path_provider: 2.1.2  # Get device storage paths
+  uuid: 4.3.3  # Generate unique IDs for messages
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

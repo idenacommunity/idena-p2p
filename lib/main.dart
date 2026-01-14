@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/account_provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/contact_provider.dart';
 import 'services/migration_service.dart';
 import 'services/vault_service.dart';
 import 'services/device_security_service.dart';
@@ -19,12 +20,17 @@ void main() async {
   // This ensures backward compatibility when security features are upgraded
   await _performSecurityMigrations();
 
+  // Initialize ContactProvider
+  final contactProvider = ContactProvider();
+  await contactProvider.init();
+
   runApp(
     /// Wrap the app with multiple providers for state management
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => AccountProvider()),
+        ChangeNotifierProvider.value(value: contactProvider),
       ],
       child: const IdenaApp(),
     ),

@@ -5,6 +5,7 @@ import '../utils/secure_error_handler.dart';
 import '../widgets/account_card.dart';
 import 'connect_screen.dart';
 import 'settings_screen.dart';
+import 'contacts/contacts_list_screen.dart';
 
 /// Main home screen that displays connection status and account information
 class HomeScreen extends StatelessWidget {
@@ -21,6 +22,17 @@ class HomeScreen extends StatelessWidget {
               if (provider.isConnected && !provider.isLoading) {
                 return Row(
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.people),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ContactsListScreen(),
+                          ),
+                        );
+                      },
+                      tooltip: 'Contacts',
+                    ),
                     IconButton(
                       icon: const Icon(Icons.settings),
                       onPressed: () {
