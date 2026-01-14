@@ -30,11 +30,12 @@ Built by the Idena community as a lightweight reference implementation for mobil
 
 ## ✨ Features
 
-- 🔐 **Secure Authentication**: PIN and biometric (TouchID/FaceID) support
+- 🛡️ **Advanced Cryptography**: Argon2id PIN hashing + ChaCha20-Poly1305 encryption
+- 🔐 **Secure Authentication**: PIN with exponential lockout + biometric (TouchID/FaceID)
 - 💼 **Account Management**: Create new accounts or import via BIP39 mnemonic/private key
 - 💰 **Balance & Identity**: View account balance and identity state
-- 🔒 **Secure Storage**: Keychain (iOS) and Keystore (Android) integration
-- ⚡ **Auto-lock**: Configurable timeout for enhanced security
+- 🔒 **Multi-layer Protection**: Secure storage + in-memory encryption + access control
+- 🚨 **Runtime Security**: Root/jailbreak detection, screenshot protection, auto-lock
 - 🎨 **Clean UI**: Simple, intuitive interface built with Flutter
 
 ## 🚀 Getting Started
@@ -97,18 +98,41 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 ## 🔐 Security Features
 
-### Active Security Protections
+### Advanced Cryptographic Security
+
+**Phase 1 & 2 Security Enhancements (Jan 2026):**
+
+- **Argon2id PIN Hashing**: OWASP-recommended password hashing with PHC format
+  - Constant-time verification to prevent timing attacks
+  - Memory-hard algorithm resistant to GPU/ASIC attacks
+  - Exponential lockout: 3 fails → 1min, 5 fails → 5min, 7 fails → 15min
+
+- **ChaCha20-Poly1305-AEAD Encryption**: Session-based private key encryption in memory
+  - RFC 7539 standard authenticated encryption
+  - 256-bit session keys with cryptographically secure random generation
+  - Automatic cleanup on lock/logout
+
+- **Multi-layer Key Protection**:
+  - Layer 1: Platform secure storage (Keychain/Keystore)
+  - Layer 2: In-memory encryption (ChaCha20-Poly1305)
+  - Layer 3: Access control (PIN/biometric required)
+
+### Network & Runtime Security
 
 - **HTTPS Enforcement**: All RPC connections secured with HTTPS-only validation
 - **Rate Limiting**: Protection against API abuse (10 requests/second)
 - **Request Timeout**: 30-second timeout for all network requests
-- **PIN Authentication**: Required for all sensitive operations
-- **Biometric Support**: Optional TouchID/FaceID on supported devices
-- **Secure Storage**: All private keys stored in iOS Keychain or Android Keystore
+- **Root/Jailbreak Detection**: Device security status checks on startup
+- **Screenshot Protection**: Native OS-level blocking on sensitive screens
 - **Clipboard Auto-Clear**: Mnemonic phrases auto-clear after 60 seconds
-- **Screenshot Protection**: Native OS-level blocking on Android/iOS (FLAG_SECURE, blur effects)
 - **Auto-lock**: Configurable timeout (immediate, 1min, 5min, 30min)
-- **Session Security**: Keys encrypted in memory during active session
+
+### Authentication
+
+- **PIN Authentication**: Argon2id hashing with lockout protection
+- **Biometric Support**: Optional TouchID/FaceID on supported devices
+- **Session Management**: Secure session tracking with automatic expiration
+- **Migration Support**: Backward-compatible security upgrades
 
 ### Security Documentation
 
@@ -174,6 +198,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Status**: Early Development (Not Production Ready)
-**Version**: 0.1.0-alpha
+**Version**: 0.1.1-alpha (Security Fixes Release)
+**Last Updated**: January 2026
 **Maintainer**: Idena Community
 **Warning**: Experimental software - Use at your own risk
