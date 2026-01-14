@@ -112,7 +112,9 @@ In today's digital world:
 
 - ❌ People who need group chats (not yet implemented)
 - ❌ Users who need media sharing (text-only for MVP)
-- ❌ Those wanting anonymous messaging (all users are identity-verified)
+- ❌ Those wanting **anonymous/pseudonymous** accounts (your Idena address is visible to recipients)
+
+**Important:** Messages are **private** (end-to-end encrypted), but your **identity** (Idena address) is **visible** to people you message. This is by design - it prevents bots and ensures verified human communication.
 
 ---
 
@@ -234,15 +236,17 @@ npm run dev
 
 ### End-to-End Encryption
 
-**What gets encrypted:**
-- ✅ Message content
-- ✅ Attachments (future feature)
-- ✅ Read receipts (future feature)
+**What gets encrypted (completely private):**
+- ✅ Message content - Nobody can read what you write
+- ✅ Attachments (future feature) - Media stays private
+- ✅ Read receipts (future feature) - Acknowledgments encrypted
 
-**What is NOT encrypted (by design):**
-- ❌ Sender and recipient addresses (needed for routing)
-- ❌ Message timestamps (needed for ordering)
-- ❌ Online/offline status (needed for delivery)
+**What is NOT encrypted (visible by design):**
+- ❌ Sender and recipient addresses - Needed for routing messages
+- ❌ Message timestamps - Needed for message ordering
+- ❌ Online/offline status - Needed for delivery optimization
+
+**Why addresses are visible:** Just like email, the "from" and "to" addresses must be visible for delivery, but the content is encrypted. This ensures verified human communication while keeping conversations private.
 
 ### Key Management
 
@@ -270,6 +274,102 @@ npm run dev
 - ❌ The relay server to read your messages (they're encrypted)
 - ❌ Network admins to be honest (end-to-end encryption)
 - ❌ Other app developers (open-source, verifiable code)
+
+---
+
+## 🔍 Privacy vs. Anonymity
+
+**This is a crucial distinction that defines how Idena P2P works:**
+
+### What You Get: Privacy ✅
+
+**Your messages are completely private:**
+- ✅ Message content is end-to-end encrypted
+- ✅ Nobody can read your messages (not even the relay server)
+- ✅ Conversation history stored locally on your device
+- ✅ No company logs or analyzes your conversations
+- ✅ Metadata minimized (only what's needed for routing)
+
+Think: **"What you say is secret"**
+
+### What You Don't Get: Anonymity ❌
+
+**Your identity is visible to recipients:**
+- ❌ Recipients see your Idena address
+- ❌ Recipients see your identity status (Human, Verified, etc.)
+- ❌ You cannot create multiple throwaway accounts
+- ❌ You cannot hide who you are from message recipients
+- ❌ One person = one Idena identity (by design)
+
+Think: **"Who you are is known"**
+
+### The Comparison Table
+
+| Feature | Idena P2P | Anonymous Apps | Traditional Apps |
+|---------|-----------|----------------|------------------|
+| **Message Privacy** | ✅ Encrypted | ✅ Encrypted | ⚠️ Varies |
+| **Identity Hidden** | ❌ Visible | ✅ Hidden | ⚠️ Varies |
+| **Multiple Accounts** | ❌ One per person | ✅ Unlimited | ✅ Unlimited |
+| **Bot Prevention** | ✅ Impossible | ❌ Easy | ❌ Easy |
+| **Verified Humans** | ✅ Always | ❌ Never | ❌ Never |
+| **Spam Resistant** | ✅ Yes | ❌ No | ❌ No |
+
+### Real-World Examples
+
+**Idena P2P is like:**
+- 📧 **Encrypted email with a verified sender** - You know who sent it, but can't read the content without the key
+- 🏢 **LinkedIn messaging** - Professional verified profiles + private messages
+- 📝 **Signed encrypted letters** - Return address visible, content sealed
+
+**Idena P2P is NOT like:**
+- 🎭 **Anonymous forums** (Reddit, 4chan) - Throwaway accounts, no identity
+- 🔒 **Tor hidden services** - Completely anonymous, untraceable
+- 📱 **Burner phone numbers** - Temporary, disposable identities
+
+### Why This Trade-Off?
+
+**The Problem We're Solving:**
+
+Without identity verification:
+- 🤖 Bot armies flood platforms (millions of fake accounts)
+- 🎭 Trolls create unlimited fake accounts
+- 📣 Spam becomes unmanageable
+- 🚫 No way to trust who you're talking to
+
+**Our Solution:**
+
+With verified identities:
+- ✅ Every user is a verified unique human
+- ✅ One person = one account (can't create bot armies)
+- ✅ Trust who you're messaging (they're Human/Verified)
+- ✅ Spam is impossible (can't create throwaway accounts)
+- ✅ **AND messages are still private** (end-to-end encrypted)
+
+### When Visibility Matters
+
+**Your Idena address is visible to:**
+- ✅ People you choose to message
+- ✅ People in your contact list
+- ❌ **NOT** the relay server (it only routes, doesn't store social graph)
+- ❌ **NOT** the general public (you control who you contact)
+
+**Think of it like email:**
+- The "from" address is visible to recipients
+- The message content is encrypted
+- ISP/mail server only sees encrypted data
+
+### If You Need Complete Anonymity
+
+**Consider these alternatives instead:**
+- **Session** - Anonymous messaging, no phone number, onion routing
+- **Briar** - Completely anonymous P2P, no servers
+- **Tor Messenger** - Anonymous chat over Tor network
+- **Signal with no phone** - Pseudonymous if you don't share identity
+
+**Idena P2P is for people who want:**
+- Private conversations (encrypted messages)
+- Verified identities (know who you're talking to)
+- Bot-free communication (no fake accounts)
 
 ---
 
@@ -603,6 +703,12 @@ A: Your messages are stored locally, so you'll lose access to them. However, you
 
 **Q: Is my mnemonic phrase safe?**
 A: Your mnemonic phrase is stored encrypted in platform-secure storage (Keychain on iOS, Keystore on Android). It's protected by your PIN and device security.
+
+**Q: Is this anonymous messaging?**
+A: No, it's **private** messaging, not **anonymous**. Your message content is encrypted (private), but your Idena address is visible to recipients (not anonymous). This is intentional - it prevents bots and ensures you're talking to verified humans. See the "Privacy vs. Anonymity" section above for details.
+
+**Q: Can people see who I'm messaging?**
+A: Only the people you choose to message can see your address. The relay server sees sender/recipient addresses for routing, but doesn't store your social graph or analyze who you talk to. Your contacts list is stored locally on your device only.
 
 ### Technical Questions
 
